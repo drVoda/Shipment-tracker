@@ -16,7 +16,7 @@ function Dropdown({ title, items, onSelect }) {
 	return (
 		<div className="dropdown">
 			<button onClick={toggleDropdown} className="dropbtn">
-				{title}🔽
+				{title}
 			</button>
 			{isOpen && (
 				<div className="dropdown-content">
@@ -32,6 +32,7 @@ function Dropdown({ title, items, onSelect }) {
 }
 
 Dropdown.propTypes = {
+	title: PropTypes.string.isRequired,
 	items: PropTypes.arrayOf(PropTypes.string).isRequired,
 	onSelect: PropTypes.func.isRequired,
 };

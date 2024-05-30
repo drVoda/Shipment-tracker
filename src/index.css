@@ -1,28 +1,121 @@
-body {
+/* general styles*/
+
+#root {
 	margin: 0;
 }
+
+body {
+	font-family: Arial, sans-serif;
+	background-color: rgb(250, 241, 248);
+	color: #333;
+	margin: 0;
+}
+
+div {
+	margin: 20px;
+}
+
+label {
+	font-weight: bold;
+	margin-right: 10px;
+	color: magenta;
+}
+
+button {
+	background-color: white;
+	color: black;
+	border: 1px solid grey;
+	border-collapse: collapse;
+	padding: 5px 10px;
+	margin: 0px;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: magenta;
+	color: white;
+	border: 1px solid magenta;
+}
+
+button:hover:disabled {
+	background-color: #ddd;
+	cursor: not-allowed;
+	border: 1px solid grey;
+	color: black;
+}
+
+button:disabled {
+	background-color: #ddd;
+	cursor: not-allowed;
+}
+
+/*styles for header*/
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: hsl(300, 100%, 70%);
+	padding: 0;
+	margin: 0;
+}
+
+.header-title {
+	margin: 0 20px;
+	font-size: 35px;
+	color: #282424;
+	padding: 0;
+}
+
+.user-icon {
+	display: flex;
+	align-items: center;
+}
+
+.user-image {
+	width: 50px;
+	height: 50px;
+	margin-right: 10px;
+}
+
+.user-info {
+	display: flex;
+	flex-direction: column;
+	margin: 0 10px;
+}
+
+.user-name {
+	margin: 0;
+	font-size: 18px;
+	color: #282424;
+	text-align: center;
+}
+
+.user-role {
+	margin: 0;
+	font-size: 15px;
+	color: #4b4f52;
+	text-align: center;
+}
+
+/*styles for DropDown component*/
 .dropdown {
 	position: relative;
 	display: inline-block;
 }
 
 .dropbtn {
-	background-color: #9e3d8b;
-	color: white;
-	padding: 16px;
 	font-size: 16px;
-	border: none;
-	cursor: pointer;
-	min-width: 90px;
+	margin: 0px 10px;
 }
 
 .dropdown-content {
 	display: block;
 	position: absolute;
 	background-color: #f9f9f9;
-	min-width: 160px;
+	min-width: 80px;
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 	z-index: 1;
+	margin: 0px 10px;
 }
 
 .dropdown-content a {
@@ -34,4 +127,76 @@ body {
 
 .dropdown-content a:hover {
 	background-color: #f1f1f1;
+}
+
+/*styles for table elements*/
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th,
+td {
+	border: 1px solid #ddd;
+	padding: 8px;
+	text-align: left;
+}
+
+th {
+	background-color: magenta;
+	color: white;
+	text-align: center;
+}
+
+tr {
+	background-color: white;
+}
+
+tr:hover {
+	background-color: #ddd;
+}
+
+.expanded-row td {
+	background-color: #f9f9f9;
+}
+
+.expanded-content {
+	display: flex;
+	justify-content: space-between;
+}
+
+/*styles for auxilliary table components*/
+.page-selector {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-top: 10px;
+	margin-right: 0;
+}
+
+.size-filter-selector {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	margin-bottom: 10px;
+	margin-right: 0;
+}
+
+.size-filter-selector > * {
+	margin: 0;
+}
+
+.page-selector > label {
+	min-width: 5rem;
+}
+
+.col-icon {
+	border-right: none;
+	margin: 0;
+	width: 1px;
+	color: #545252;
+}
+
+td:nth-child(2) {
+	border-left: none;
 }
