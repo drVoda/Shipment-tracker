@@ -15,7 +15,7 @@ function Dropdown({ title, items, onSelect }) {
 
 	return (
 		<div className="dropdown">
-			<button onClick={toggleDropdown} className="dropbtn">
+			<button onClick={toggleDropdown} className="dropbtn" type="button">
 				{title}
 			</button>
 			{isOpen && (

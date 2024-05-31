@@ -29,6 +29,7 @@ button {
 	padding: 5px 10px;
 	margin: 0px;
 	cursor: pointer;
+	border-radius: 5px;
 }
 
 button:hover {
@@ -106,6 +107,7 @@ button:disabled {
 .dropbtn {
 	font-size: 16px;
 	margin: 0px 10px;
+	padding-right: 5px;
 }
 
 .dropdown-content {
@@ -146,6 +148,14 @@ th {
 	background-color: magenta;
 	color: white;
 	text-align: center;
+	position: relative;
+	padding-right: 20px;
+}
+th span {
+	position: absolute; /* Position the arrow icon absolutely */
+	top: 50%; /* Align the arrow vertically */
+	right: 5px; /* Adjust the position of the arrow */
+	transform: translateY(-50%); /* Center the arrow vertically */
 }
 
 tr {

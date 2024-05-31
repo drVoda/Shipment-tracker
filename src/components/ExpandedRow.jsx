@@ -3,7 +3,7 @@ import React from "react";
 function ExpandedRow({ shipment }) {
 	return (
 		<tr className="expanded-row">
-			<td colSpan="9">
+			<td colSpan="10">
 				<div className="expanded-content">
 					<div className="expanded-column">
 						<p>
