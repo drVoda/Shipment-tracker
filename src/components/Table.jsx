@@ -2,86 +2,60 @@ import React, { useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
 import axios from "axios";
 import ExpandedRow from "./ExpandedRow";
+import SearchForm from "./SearchForm";
+import { fetchShipments, findTotalSize } from "./APIFunctions";
 
 function Table() {
 	const [shipments, setShipments] = useState([]);
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(20);
 	const [sort, setSort] = useState([]);
+
 	const [status, setStatus] = useState("any");
 	const [id, setId] = useState();
 	const [customerId, setCustomerId] = useState();
 	const [orderId, setOrderId] = useState();
-	const [currentSearch, setCurrentSearch] = useState("id");
+
 	const [totalSize, setTotalSize] = useState(1000);
 	const [expandedRows, setExpandedRows] = useState([]);
-	const [currentInput, setCurrentInput] = useState("");
 
 	const accessToken = "your-mock-access-token"; // Replace with your actual token
 
-	const fetchShipments = async () => {
-		try {
+	useEffect(() => {
+		const getContent = async () => {
 			const sortParams = sort.join(",") ? sort.join(",") : "id";
-			console.log(sortParams);
-			const response = await axios.get(
-				`http://localhost:8017/shipmentTracking/v1/shipmentTracking`,
-				{
-					params: {
-						page: page,
-						size: size,
-						sort: sortParams,
-						id: id,
-						customerId: customerId,
-						orderId: orderId,
-						status: status === "any" ? null : status,
-					},
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-						"Content-Type": "application/json",
-					},
-				}
+			let response = await fetchShipments(
+				accessToken,
+				page,
+				size,
+				sortParams,
+				id,
+				customerId,
+				orderId,
+				status === "any" ? null : status
 			);
-			const data = response.data;
-			setShipments(data);
-		} catch (error) {
-			console.error("Error fetching shipments:", error);
-		}
-	};
+			if (!Array.isArray(response)) {
+				response = [response];
+			}
 
-	useEffect(() => {
-		async () => {
-			const response = await fetch(
-				`http://localhost:8017/shipmentTracking/v1/shipmentTracking`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${accessToken}`,
-						"Content-Type": "application/json",
-					},
-				}
-			);
-			const data = await response.json();
-			setTotalSize(data.length);
+			setShipments(response); // problem s async!!
 		};
-	}, []);
+		const getLength = async () => {
+			const length = await findTotalSize(
+				accessToken,
+				id,
+				customerId,
+				orderId,
+				status
+			);
+			setTotalSize(length);
+		};
 
-	useEffect(() => {
-		fetchShipments();
-	}, [page, size, sort]);
+		getContent();
+		getLength();
+	}, [page, size, sort, status, id, orderId, customerId]);
 
 	const sizeDropDownItems = ["10", "20", "50", "100", "1000", "2000"];
-	const searchDropDownItems = ["id", "customerId", "orderId"];
-	const statusDropDownItems = [
-		"any",
-		"initialized",
-		"inProcess",
-		"processed",
-		"shipped",
-		"inCustoms",
-		"delivered",
-		"returned",
-		"error",
-	];
 
 	const toggleRow = (shipmentId) => {
 		setExpandedRows((prev) =>
@@ -128,39 +102,29 @@ function Table() {
 		}
 	};
 
-	const handleSearchCategoryChange = (newCategory) => {
-		if (newCategory) {
-			setId(null);
-			setOrderId(null);
-			setCustomerId(null);
-			setCurrentSearch(newCategory);
+	const handleSubmit = (currentSearch, currentInput, currentStatus) => {
+		setStatus(currentStatus);
+		setId(null);
+		setOrderId(null);
+		setCustomerId(null);
+		switch (currentSearch) {
+			case "id":
+				setId(currentInput);
+				break;
+			case "customerId":
+				setCustomerId(currentInput);
+				break;
+			case "orderId":
+				setOrderId(currentInput);
+				break;
 		}
-		if (id) return "id";
-		if (orderId) return "orderId";
-		if (customerId) return "customerId";
+		setPage(0);
 	};
 
 	return (
 		<div>
-			<form onSubmit={console.log("submit")}>
-				<input
-					type="text"
-					placeholder={"Unesi " + { currentSearch } + "..."}
-					value={currentInput}
-					onChange={(e) => setCurrentInput(e.target.value)}
-				/>
-				<Dropdown
-					title={currentSearch + " ▾"}
-					items={searchDropDownItems}
-					onSelect={handleSearchCategoryChange}
-				/>
-				<Dropdown
-					title={status + " ▾"}
-					items={statusDropDownItems}
-					onSelect={setStatus}
-				/>
-				<input type="submit" />
-			</form>
+			<SearchForm handleSubmit={handleSubmit} />
+
 			<div className="size-filter-selector">
 				<label>Show </label>
 				<Dropdown
@@ -204,46 +168,50 @@ function Table() {
 					</tr>
 				</thead>
 				<tbody>
-					{shipments.map((shipment) => {
-						return (
-							<>
-								<tr key={shipment.id} onClick={() => toggleRow(shipment.id)}>
-									{!expandedRows.includes(shipment.id) ? (
-										<td className="col-icon">&#9656;</td>
-									) : (
-										<td className="col-icon">&#9662;</td>
-									)}
-									<td>{shipment.id}</td>
-									<td>{shipment.order[0].id}</td>
-									<td>{shipment.relatedCustomer.id}</td>
-									<td>{shipment.status}</td>
-									<td>{shipment.carrier}</td>
-									<td>{shipment.trackingCode}</td>
-									<td>
-										{new Date(
-											shipment.estimatedDeliveryDate
-										).toLocaleDateString()}
-									</td>
-									<td>
-										{shipment.addressFrom.streetNr}{" "}
-										{shipment.addressFrom.streetName}
-										{", "}
-										{shipment.addressFrom.city}
-									</td>
-									<td>
-										{" "}
-										{shipment.addressTo.streetNr}{" "}
-										{shipment.addressTo.streetName}
-										{", "}
-										{shipment.addressTo.city}
-									</td>
-								</tr>
-								{expandedRows.includes(shipment.id) ? (
-									<ExpandedRow shipment={shipment} />
-								) : null}
-							</>
-						);
-					})}
+					{shipments[0] && !shipments[0].error ? (
+						shipments.map((shipment) => {
+							return (
+								<>
+									<tr key={shipment.id} onClick={() => toggleRow(shipment.id)}>
+										{!expandedRows.includes(shipment.id) ? (
+											<td className="col-icon">&#9656;</td>
+										) : (
+											<td className="col-icon">&#9662;</td>
+										)}
+										<td>{shipment.id}</td>
+										<td>{shipment.order[0].id}</td>
+										<td>{shipment.relatedCustomer.id}</td>
+										<td>{shipment.status}</td>
+										<td>{shipment.carrier}</td>
+										<td>{shipment.trackingCode}</td>
+										<td>
+											{new Date(
+												shipment.estimatedDeliveryDate
+											).toLocaleDateString()}
+										</td>
+										<td>
+											{shipment.addressFrom.streetNr}{" "}
+											{shipment.addressFrom.streetName}
+											{", "}
+											{shipment.addressFrom.city}
+										</td>
+										<td>
+											{" "}
+											{shipment.addressTo.streetNr}{" "}
+											{shipment.addressTo.streetName}
+											{", "}
+											{shipment.addressTo.city}
+										</td>
+									</tr>
+									{expandedRows.includes(shipment.id) ? (
+										<ExpandedRow shipment={shipment} />
+									) : null}
+								</>
+							);
+						})
+					) : (
+						<p>No shipments</p>
+					)}
 				</tbody>
 			</table>
 			<div className="page-selector">
@@ -255,13 +223,19 @@ function Table() {
 					&lt;
 				</button>
 				<button
-					disabled={page + 1 === totalSize / size}
+					disabled={
+						page + 1 === Math.ceil(totalSize / size) ||
+						Math.ceil(totalSize / size) === 0
+					}
 					onClick={() => setPage((p) => p + 1)}>
 					&gt;
 				</button>
 				<button
-					disabled={page + 1 === totalSize / size}
-					onClick={() => setPage(totalSize / size - 1)}>
+					disabled={
+						page + 1 === Math.ceil(totalSize / size) ||
+						Math.ceil(totalSize / size) === 0
+					}
+					onClick={() => setPage(Math.ceil(totalSize / size) - 1)}>
 					&gt;|
 				</button>
 			</div>
