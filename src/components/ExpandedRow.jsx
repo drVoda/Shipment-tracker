@@ -27,13 +27,13 @@ function ExpandedRow({ shipment }) {
 							<strong>Status Change Reason:</strong>{" "}
 							{shipment.statusChangeReason}
 						</p>
-					</div>
-					<div className="expanded-column">
 						<p>
 							<strong>Weight:</strong> {shipment.weight} kg
 						</p>
+					</div>
+					<div className="expanded-column">
 						<p>
-							<strong>Order ID:</strong> {shipment.order[0].id}
+							<strong>Order Name:</strong> {shipment.order[0].name}
 						</p>
 						<p>
 							<strong>Order Link:</strong>{" "}
@@ -41,23 +41,24 @@ function ExpandedRow({ shipment }) {
 								href={shipment.order[0].href}
 								target="_blank"
 								rel="noopener noreferrer">
-								{shipment.order[0].name}
+								{shipment.order[0].href}
 							</a>
+							<p>
+								<strong>Related Customer Name:</strong>{" "}
+								{shipment.relatedCustomer.name}
+							</p>
+							<p>
+								<strong>Customer Description:</strong>{" "}
+								{shipment.relatedCustomer.description}
+							</p>
+							<p>
+								<strong>Create Date:</strong>{" "}
+								{new Date(shipment.createDate).toLocaleDateString()}
+							</p>
 						</p>
 					</div>
 					<div className="expanded-column">
-						<p>
-							<strong>Related Customer Name:</strong>{" "}
-							{shipment.relatedCustomer.name}
-						</p>
-						<p>
-							<strong>Customer Description:</strong>{" "}
-							{shipment.relatedCustomer.description}
-						</p>
-						<p>
-							<strong>Create Date:</strong>{" "}
-							{new Date(shipment.createDate).toLocaleDateString()}
-						</p>
+						<button className="submit-button">Edit order</button>
 					</div>
 				</div>
 			</td>

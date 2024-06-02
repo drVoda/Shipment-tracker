@@ -124,7 +124,6 @@ function Table() {
 	return (
 		<div>
 			<SearchForm handleSubmit={handleSubmit} />
-
 			<div className="size-filter-selector">
 				<label>Show </label>
 				<Dropdown

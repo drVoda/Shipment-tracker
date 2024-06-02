@@ -179,6 +179,16 @@ tr:hover {
 .expanded-content {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+}
+
+.expanded-content .submit-button {
+	margin: 0;
+	padding: 10px;
+}
+
+.expanded-column {
+	margin: 0 5px;
 }
 
 /*styles for auxilliary table components*/
@@ -219,6 +229,15 @@ td:nth-child(2) {
 
 /*styes for search form*/
 form {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	padding: 0;
+	margin: 0 0 50px 0;
+}
+
+.container {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
