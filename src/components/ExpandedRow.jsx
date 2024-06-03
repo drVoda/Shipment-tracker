@@ -1,6 +1,26 @@
 import React from "react";
 
-function ExpandedRow({ shipment }) {
+/**
+ * ExpandedRow component for displaying detailed information about a shipment.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.shipment - The shipment data.
+ * @param {string} props.shipment.carrierTrackingUrl - The URL for tracking the shipment with the carrier.
+ * @param {string} props.shipment.trackingDate - The date when the shipment was tracked.
+ * @param {string} props.shipment.statusChangeDate - The date when the shipment status was last changed.
+ * @param {string} props.shipment.statusChangeReason - The reason for the last status change.
+ * @param {number} props.shipment.weight - The weight of the shipment.
+ * @param {Array} props.shipment.order - The order associated with the shipment.
+ * @param {string} props.shipment.order[].name - The name of the order.
+ * @param {string} props.shipment.order[].href - The link to the order details.
+ * @param {Object} props.shipment.relatedCustomer - The related customer information.
+ * @param {string} props.shipment.relatedCustomer.name - The name of the related customer.
+ * @param {string} props.shipment.relatedCustomer.description - The description of the related customer.
+ * @param {string} props.shipment.createDate - The date when the shipment was created.
+ * @param {function} props.editHandle - The function to call when the edit button is clicked.
+ * @returns {JSX.Element} The rendered component.
+ */
+function ExpandedRow({ shipment, editHandle }) {
 	return (
 		<tr className="expanded-row">
 			<td colSpan="10">
@@ -43,26 +63,29 @@ function ExpandedRow({ shipment }) {
 								rel="noopener noreferrer">
 								{shipment.order[0].href}
 							</a>
-							<p>
-								<strong>Related Customer Name:</strong>{" "}
-								{shipment.relatedCustomer.name}
-							</p>
-							<p>
-								<strong>Customer Description:</strong>{" "}
-								{shipment.relatedCustomer.description}
-							</p>
-							<p>
-								<strong>Create Date:</strong>{" "}
-								{new Date(shipment.createDate).toLocaleDateString()}
-							</p>
+						</p>
+						<p>
+							<strong>Related Customer Name:</strong>{" "}
+							{shipment.relatedCustomer.name}
+						</p>
+						<p>
+							<strong>Customer Description:</strong>{" "}
+							{shipment.relatedCustomer.description}
+						</p>
+						<p>
+							<strong>Create Date:</strong>{" "}
+							{new Date(shipment.createDate).toLocaleDateString()}
 						</p>
 					</div>
 					<div className="expanded-column">
-						<button className="submit-button">Edit order</button>
+						<button className="submit-button" onClick={() => editHandle(1)}>
+							Edit order
+						</button>
 					</div>
 				</div>
 			</td>
 		</tr>
 	);
 }
+
 export default ExpandedRow;

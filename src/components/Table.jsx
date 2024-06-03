@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
-import axios from "axios";
 import ExpandedRow from "./ExpandedRow";
 import SearchForm from "./SearchForm";
 import { fetchShipments, findTotalSize } from "./APIFunctions";
+import PropTypes from "prop-types";
 
-function Table() {
+/**
+ * Table component for displaying and managing shipment data.
+ *
+ * @param {Object} props - The component props.
+ * @param {function} props.editCreateHandle - The function to call when editing or creating a shipment.
+ * @returns {JSX.Element} The rendered component.
+ */
+function Table({ editCreateHandle }) {
 	const [shipments, setShipments] = useState([]);
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(20);
@@ -38,7 +45,7 @@ function Table() {
 				response = [response];
 			}
 
-			setShipments(response); // problem s async!!
+			setShipments(response);
 		};
 		const getLength = async () => {
 			const length = await findTotalSize(
@@ -57,6 +64,11 @@ function Table() {
 
 	const sizeDropDownItems = ["10", "20", "50", "100", "1000", "2000"];
 
+	/**
+	 * Toggles the expanded state of a shipment row.
+	 *
+	 * @param {string} shipmentId - The ID of the shipment.
+	 */
 	const toggleRow = (shipmentId) => {
 		setExpandedRows((prev) =>
 			prev.includes(shipmentId)
@@ -65,6 +77,11 @@ function Table() {
 		);
 	};
 
+	/**
+	 * Updates the sorting parameters.
+	 *
+	 * @param {string} sortParam - The sorting parameter to update.
+	 */
 	const updateSorting = (sortParam) => {
 		setSort((prevSort) => {
 			const existingIndex = prevSort.findIndex((s) => s.slice(1) === sortParam);
@@ -92,16 +109,30 @@ function Table() {
 		});
 	};
 
+	/**
+	 * Renders the sorting indicator for a field.
+	 *
+	 * @param {string} field - The field to render the indicator for.
+	 * @returns {JSX.Element} The sorting indicator element.
+	 */
 	const renderSortingIndicator = (field) => {
 		if (sort.includes(`+${field}`)) {
-			return <span>&#9650;</span>; // Ascending indicator (up arrow)
+			return <span>&#9650;</span>;
 		} else if (sort.includes(`-${field}`)) {
-			return <span>&#9660;</span>; // Descending indicator (down arrow)
+			return <span>&#9660;</span>;
 		} else {
-			return null; // No sorting indicator
+			return null;
 		}
 	};
 
+	/**
+	 * Handles submission of search form.
+	 * Sets state variables based on search input and status.
+	 *
+	 * @param {string} currentSearch - The current search category.
+	 * @param {string} currentInput - The current search input.
+	 * @param {string} currentStatus - The current status filter.
+	 */
 	const handleSubmit = (currentSearch, currentInput, currentStatus) => {
 		setStatus(currentStatus);
 		setId(null);
@@ -123,7 +154,7 @@ function Table() {
 
 	return (
 		<div>
-			<SearchForm handleSubmit={handleSubmit} />
+			<SearchForm handleSubmit={handleSubmit} createHandle={editCreateHandle} />
 			<div className="size-filter-selector">
 				<label>Show </label>
 				<Dropdown
@@ -170,8 +201,8 @@ function Table() {
 					{shipments[0] && !shipments[0].error ? (
 						shipments.map((shipment) => {
 							return (
-								<>
-									<tr key={shipment.id} onClick={() => toggleRow(shipment.id)}>
+								<React.Fragment key={shipment.id}>
+									<tr onClick={() => toggleRow(shipment.id)}>
 										{!expandedRows.includes(shipment.id) ? (
 											<td className="col-icon">&#9656;</td>
 										) : (
@@ -203,9 +234,12 @@ function Table() {
 										</td>
 									</tr>
 									{expandedRows.includes(shipment.id) ? (
-										<ExpandedRow shipment={shipment} />
+										<ExpandedRow
+											shipment={shipment}
+											editHandle={editCreateHandle}
+										/>
 									) : null}
-								</>
+								</React.Fragment>
 							);
 						})
 					) : (
@@ -243,3 +277,7 @@ function Table() {
 }
 
 export default Table;
+
+Table.PropTypes = {
+	editCreateHandle: PropTypes.func.isRequired,
+};
